@@ -7,6 +7,8 @@
 
 -- 1. Выручка, количество заказов и средний чек по месяцам,
 --    рост выручки к прошлому месяцу (LAG)
+--    Период: январь 2017 — август 2018. Данные за 2016 год неполные
+--    (единичные заказы, пропущенные месяцы) и искажают рост к прошлому месяцу.
 WITH monthly AS (
     SELECT DATE_TRUNC('month', o.order_purchase_timestamp)::date AS month,
            COUNT(DISTINCT o.order_id) AS orders_cnt,
@@ -14,6 +16,8 @@ WITH monthly AS (
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.order_id
     WHERE o.order_status = 'delivered'
+      AND o.order_purchase_timestamp >= '2017-01-01'
+      AND o.order_purchase_timestamp <  '2018-09-01'
     GROUP BY 1
 )
 SELECT month,
